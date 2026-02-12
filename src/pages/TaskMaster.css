@@ -1,0 +1,59 @@
+.task-master-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.task-board {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    flex: 1;
+    /* Take remaining height */
+}
+
+.task-column {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .task-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .task-header button {
+        width: 100%;
+        /* Full width button on mobile */
+        justify-content: center;
+    }
+
+    .task-board {
+        flex-direction: column;
+        /* Stack columns vertically */
+        overflow-x: hidden;
+        /* No horizontal scroll needed */
+        height: auto;
+        /* Allow scrolling down */
+    }
+
+    .task-column {
+        min-width: 100%;
+        /* Full width */
+        margin-bottom: 24px;
+        /* Spacing between stacked columns */
+    }
+}

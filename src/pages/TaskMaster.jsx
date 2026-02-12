@@ -8,9 +8,11 @@ import CreateTaskModal from '../components/shared/CreateTaskModal';
 import { useAuth } from '../contexts/AuthContext';
 import ConfirmationModal from '../components/shared/ConfirmationModal';
 
+import './TaskMaster.css';
+
 const TaskColumn = ({ title, tasks, onStatusChange, onDeleteTask, highlightId }) => {
     return (
-        <div style={{ flex: 1, minWidth: '300px' }}>
+        <div className="task-column">
             {/* ... title ... */}
             <h3 style={{
                 color: 'var(--color-gold-primary)',
@@ -210,8 +212,8 @@ const TaskMaster = () => {
     };
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <div className="task-master-container">
+            <div className="task-header">
                 <div>
                     <h1 style={{ color: 'var(--color-gold-primary)', margin: 0 }}>Task Master</h1>
                     <p style={{ color: 'var(--color-text-muted)', marginTop: '8px' }}>Project tracking and workflow.</p>
@@ -229,7 +231,7 @@ const TaskMaster = () => {
             {loading ? (
                 <div style={{ color: 'var(--color-text-muted)' }}>Loading tasks...</div>
             ) : (
-                <div style={{ display: 'flex', gap: '24px', overflowX: 'auto', paddingBottom: '20px' }}>
+                <div className="task-board">
                     <TaskColumn
                         title="To Do"
                         tasks={tasksByStatus['To Do']}
