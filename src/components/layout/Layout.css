@@ -1,0 +1,22 @@
+.layout-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 250px; /* Desktop sidebar width */
+    padding: 40px;
+    box-sizing: border-box;
+    position: relative;
+    transition: margin-left 0.3s ease;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px; /* Reduce padding on mobile */
+        padding-bottom: 80px; /* Space for bottom nav */
+    }
+}

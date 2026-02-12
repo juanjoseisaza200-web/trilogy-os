@@ -70,6 +70,57 @@
     transition: color 0.2s ease;
 }
 
+/* ... existing styles ... */
+
 .logout-btn:hover {
     color: #ff4d4d;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        flex-direction: row;
+        border-right: none;
+        border-top: 1px solid var(--color-border-glass);
+        padding: 10px 20px;
+        background: rgba(15, 15, 15, 0.95);
+        /* More opaque for bottom bar */
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo-area {
+        display: none;
+    }
+
+    .nav-menu {
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        gap: 0;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        padding: 8px;
+        font-size: 0.75rem;
+        gap: 4px;
+        text-align: center;
+        border-radius: 12px;
+    }
+
+    .nav-item span {
+        display: block;
+        /* Ensure label is shown below icon */
+    }
+
+    .user-area {
+        display: none;
+        /* Hide logout on mobile nav, maybe move to profile? */
+    }
 }

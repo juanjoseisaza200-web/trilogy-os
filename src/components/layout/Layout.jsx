@@ -1,19 +1,13 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 import UserProfile from '../shared/UserProfile';
+import './Layout.css';
 
 const Layout = ({ children }) => {
     return (
-        <div style={{ display: 'flex' }}>
+        <div className="layout-container">
             <Sidebar />
-            <main style={{
-                flex: 1,
-                marginLeft: '250px',
-                padding: '40px',
-                minHeight: '100vh',
-                boxSizing: 'border-box',
-                position: 'relative' // Ensure positioning context
-            }}>
+            <main className="main-content">
                 <div style={{
                     display: 'flex',
                     justifyContent: 'flex-end',
