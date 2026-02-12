@@ -5,7 +5,8 @@
 
 .main-content {
     flex: 1;
-    margin-left: 250px; /* Desktop sidebar width */
+    margin-left: 250px;
+    /* Desktop sidebar width */
     padding: 40px;
     box-sizing: border-box;
     position: relative;
@@ -16,7 +17,9 @@
 @media (max-width: 768px) {
     .main-content {
         margin-left: 0;
-        padding: 20px; /* Reduce padding on mobile */
-        padding-bottom: 80px; /* Space for bottom nav */
+        padding: 20px;
+        /* Reduce padding on mobile */
+        padding-bottom: 100px;
+        /* Increased space for bottom nav to prevent overlap */
     }
 }
