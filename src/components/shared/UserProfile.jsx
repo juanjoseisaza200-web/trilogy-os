@@ -5,7 +5,7 @@ import GlassInput from './GlassInput';
 import GlassButton from './GlassButton';
 
 const UserProfile = () => {
-    const { user, role, updateRole } = useAuth();
+    const { user, role, updateRole, logout } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [tempRole, setTempRole] = useState(role || '');
 
@@ -147,6 +147,31 @@ const UserProfile = () => {
                         </GlassButton>
                     </div>
                 </form>
+
+                <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'center' }}>
+                    <button
+                        onClick={() => {
+                            logout();
+                            setIsModalOpen(false);
+                        }}
+                        style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: '#ff4d4d',
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            opacity: 0.8,
+                            transition: 'opacity 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
+                    >
+                        Sign Out
+                    </button>
+                </div>
             </GlassModal>
         </>
     );
