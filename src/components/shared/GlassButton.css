@@ -1,0 +1,32 @@
+.glass-button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1rem;
+}
+
+.glass-button.primary {
+    background: var(--color-gold-primary);
+    color: #000;
+    /* Contrast against gold */
+}
+
+.glass-button.primary:hover {
+    background: var(--color-gold-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.glass-button.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-border-glass);
+}
+
+.glass-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}

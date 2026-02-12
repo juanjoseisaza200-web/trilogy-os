@@ -1,0 +1,26 @@
+:root {
+  /* Colors */
+  --color-bg-dark: #0f0f0f;
+  --color-bg-card: rgba(255, 255, 255, 0.05);
+  --color-gold-primary: #10B981;
+  /* Emerald 500 */
+  --color-gold-hover: #059669;
+  /* Emerald 600 */
+  --color-text-main: #ffffff;
+  --color-text-muted: #a0a0a0;
+  --color-border-glass: rgba(255, 255, 255, 0.1);
+
+  /* Glassmorphism */
+  --glass-blur: 10px;
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Typography */
+  --font-main: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
