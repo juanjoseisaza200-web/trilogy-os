@@ -10,20 +10,32 @@ import ConfirmationModal from '../components/shared/ConfirmationModal';
 
 import './TaskMaster.css';
 
-const TaskColumn = ({ title, tasks, onStatusChange, onDeleteTask, highlightId }) => {
+const TaskColumn = ({ title, tasks, onStatusChange, onDeleteTask, highlightId, headerAction }) => {
     return (
         <div className="task-column">
             {/* ... title ... */}
-            <h3 style={{
-                color: 'var(--color-gold-primary)',
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 borderBottom: '1px solid var(--color-border-glass)',
                 paddingBottom: '12px',
                 marginBottom: '24px'
             }}>
-                {title} ({tasks.length})
-            </h3>
+                <h3 style={{
+                    color: 'var(--color-gold-primary)',
+                    margin: 0
+                }}>
+                    {title} ({tasks.length})
+                </h3>
+                {headerAction}
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {tasks.map((task) => {
+                    // ... (rest of TaskColumn remains same until we close it, but I need to be careful with replace_file_content range)
+
+                    // Let's target the TaskColumn definition start
+
                     const isHighlighted = task.id === highlightId;
                     return (
                         <div key={task.id} id={`task-${task.id}`}>
@@ -136,6 +148,7 @@ const TaskMaster = () => {
 
     const [highlightId, setHighlightId] = useState(null);
     const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, id: null });
+    const [clearConfirmation, setClearConfirmation] = useState({ isOpen: false });
     const [activeTab, setActiveTab] = useState('To Do');
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -209,6 +222,22 @@ const TaskMaster = () => {
             loadTasks();
         }
         setDeleteConfirmation({ isOpen: false, id: null });
+    };
+
+    const confirmClearDoneTasks = async () => {
+        try {
+            const doneTasks = tasksByStatus['Done'];
+            const ids = doneTasks.map(t => t.id);
+            if (ids.length === 0) return;
+
+            await airtableService.deleteTasks(ids);
+            setTasks(tasks.filter(t => t.status !== 'Done')); // Optimistic update
+        } catch (error) {
+            console.error('Clear done failed:', error);
+            alert('Failed to clear done tasks');
+            loadTasks();
+        }
+        setClearConfirmation(false);
     };
 
     console.log('TaskMaster tasks state:', tasks);
@@ -391,6 +420,16 @@ const TaskMaster = () => {
                 title="Delete Task"
                 message="Are you sure you want to delete this task? This cannot be undone."
                 confirmText="Delete Task"
+                confirmVariant="danger"
+            />
+
+            <ConfirmationModal
+                isOpen={clearConfirmation.isOpen}
+                onClose={() => setClearConfirmation({ isOpen: false })}
+                onConfirm={confirmClearDoneTasks}
+                title="Clear Done Tasks"
+                message={`Are you sure you want to delete all ${tasksByStatus['Done']?.length} completed tasks? This cannot be undone.`}
+                confirmText="Clear All"
                 confirmVariant="danger"
             />
 
