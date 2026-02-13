@@ -8,6 +8,20 @@ const Sidebar = () => {
     const { logout, user } = useAuth();
     const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [isEditing, setIsEditing] = React.useState(false);
+
+    // Default dock items
+    const defaultDock = ['/', '/projects', '/tasks'];
+
+    // Initialize from local storage or default
+    const [dockItems, setDockItems] = React.useState(() => {
+        const saved = localStorage.getItem('trilogy_dock_prefs');
+        return saved ? JSON.parse(saved) : defaultDock;
+    });
+
+    React.useEffect(() => {
+        localStorage.setItem('trilogy_dock_prefs', JSON.stringify(dockItems));
+    }, [dockItems]);
 
     React.useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -18,14 +32,27 @@ const Sidebar = () => {
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
         { icon: Folder, label: 'Projects', path: '/projects' },
-        { icon: CheckSquare, label: 'Tasks', path: '/tasks' }, // Shortened label for mobile
+        { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
         { icon: Users, label: 'Meeting Vault', path: '/meetings' },
         { icon: Calendar, label: 'Calendar', path: '/calendar' },
     ];
 
-    // On mobile, sidebar acts as bottom dock. We only show first 3 items + Menu
-    // On desktop, we show everything.
-    const visibleNavItems = isMobile ? navItems.slice(0, 3) : navItems;
+    const toggleDockItem = (path) => {
+        if (dockItems.includes(path)) {
+            // Remove, but prevent empty logic if desired (optional)
+            setDockItems(prev => prev.filter(p => p !== path));
+        } else {
+            // Add, limit to 4
+            if (dockItems.length < 4) {
+                setDockItems(prev => [...prev, path]);
+            }
+        }
+    };
+
+    // On mobile, show items that are in the dockItems array + Menu
+    const visibleNavItems = isMobile
+        ? navItems.filter(item => dockItems.includes(item.path))
+        : navItems;
 
     return (
         <>
@@ -79,49 +106,112 @@ const Sidebar = () => {
             {/* Mobile Overlay (Command Center) */}
             {isMobile && (
                 <div className={`mobile-overlay ${isMenuOpen ? 'open' : ''}`}>
-                    <button className="mobile-close-btn" onClick={() => setIsMenuOpen(false)}>
-                        <X size={24} />
-                    </button>
-
-                    <div className="mobile-grid">
-                        {navItems.map((item) => (
-                            <NavLink
-                                key={item.path}
-                                to={item.path}
-                                className="mobile-app-card"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                <div className="mobile-app-icon">
-                                    <item.icon size={24} />
-                                </div>
-                                <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>{item.label}</span>
-                            </NavLink>
-                        ))}
-                    </div>
-
-                    <div style={{ marginTop: 'auto' }}>
+                    {/* Header Row: Close Button + toggle edit */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '24px',
+                        right: '24px',
+                        left: '24px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        zIndex: 2001
+                    }}>
+                        {/* Edit Toggle */}
                         <button
-                            onClick={logout}
+                            onClick={() => setIsEditing(!isEditing)}
                             style={{
-                                width: '100%',
-                                background: 'rgba(255, 77, 77, 0.1)',
-                                border: '1px solid rgba(255, 77, 77, 0.3)',
-                                color: '#ff4d4d',
-                                padding: '16px',
-                                borderRadius: '16px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '12px',
-                                fontSize: '1rem',
-                                fontWeight: 'bold'
+                                background: isEditing ? 'var(--color-gold-primary)' : 'rgba(255,255,255,0.05)',
+                                color: isEditing ? '#000' : 'var(--color-text-muted)',
+                                border: 'none',
+                                borderRadius: '20px',
+                                padding: '8px 16px',
+                                fontSize: '0.85rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
                             }}
                         >
-                            <LogOut size={20} />
-                            Log Out
+                            {isEditing ? 'Done' : 'Customize'}
+                        </button>
+
+                        <button className="mobile-close-btn" onClick={() => { setIsMenuOpen(false); setIsEditing(false); }}>
+                            <X size={24} />
                         </button>
                     </div>
+
+                    <div className="mobile-grid">
+                        {navItems.map((item) => {
+                            const isDocked = dockItems.includes(item.path);
+                            return (
+                                <div
+                                    key={item.path}
+                                    className={`mobile-app-card ${isEditing && isDocked ? 'docked' : ''}`}
+                                    onClick={(e) => {
+                                        if (isEditing) {
+                                            e.preventDefault();
+                                            toggleDockItem(item.path);
+                                        } else {
+                                            setIsMenuOpen(false);
+                                        }
+                                    }}
+                                // wrapper is div, but inner is link if not editing? 
+                                // To simplify, we'll use a div wrapper that handles click
+                                >
+                                    {/* If not editing, wrap content in Link, otherwise just div content */}
+                                    {!isEditing ? (
+                                        <NavLink to={item.path} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit', width: '100%' }}>
+                                            <div className="mobile-app-icon">
+                                                <item.icon size={24} />
+                                            </div>
+                                            <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>{item.label}</span>
+                                        </NavLink>
+                                    ) : (
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%', opacity: isDocked ? 1 : 0.5 }}>
+                                            <div className="mobile-app-icon" style={{ position: 'relative' }}>
+                                                <item.icon size={24} />
+                                                {/* Badge for docked */}
+                                                {isDocked && (
+                                                    <div style={{
+                                                        position: 'absolute',
+                                                        top: -8,
+                                                        right: -8,
+                                                        background: 'var(--color-gold-primary)',
+                                                        borderRadius: '50%',
+                                                        width: '16px',
+                                                        height: '16px',
+                                                        border: '2px solid #000'
+                                                    }} />
+                                                )}
+                                            </div>
+                                            <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>{item.label}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
+            )}
+            width: '100%',
+            background: 'rgba(255, 77, 77, 0.1)',
+            border: '1px solid rgba(255, 77, 77, 0.3)',
+            color: '#ff4d4d',
+            padding: '16px',
+            borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            fontSize: '1rem',
+            fontWeight: 'bold'
+                            }}
+                        >
+            <LogOut size={20} />
+            Log Out
+        </button >
+                    </div >
+                </div >
             )}
         </>
     );

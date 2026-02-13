@@ -238,4 +238,10 @@
         background: rgba(255, 255, 255, 0.1);
         color: #fff;
     }
+
+    /* Active state for editing */
+    .mobile-app-card.docked {
+        background: rgba(212, 175, 55, 0.1);
+        border-color: rgba(212, 175, 55, 0.3);
+    }
 }
