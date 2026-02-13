@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import MeetingVault from './pages/MeetingVault';
-import MeetingVault from './pages/MeetingVault';
 import TaskMaster from './pages/TaskMaster';
 import Calendar from './pages/Calendar';
 import Layout from './components/layout/Layout';
