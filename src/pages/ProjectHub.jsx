@@ -25,6 +25,19 @@ const ProjectHub = () => {
     const handleProjectCreated = () => {
         loadProjects();
     };
+
+    // Relation Status Badge Colors
+    const getRelationColor = (status) => {
+        switch (status) {
+            case 'Active Client': return 'var(--color-gold-primary)'; // Gold/Greenish
+            case 'Negotiation': return '#f59e0b'; // Orange
+            case 'Prospect': return '#3b82f6'; // Blue
+            case 'On Hold': return '#ef4444'; // Red
+            case 'Completed': return '#10b981'; // Green
+            default: return 'var(--color-text-muted)';
+        }
+    };
+
     // State for delete confirmation
     const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, id: null, name: '' });
 
