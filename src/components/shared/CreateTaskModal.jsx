@@ -5,7 +5,7 @@ import GlassButton from './GlassButton';
 import airtableService from '../../services/airtable';
 import { useAuth } from '../../contexts/AuthContext';
 
-const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {} }) => {
+const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, initialProject, initialProjectName }) => {
     const { user } = useAuth();
     const [formData, setFormData] = useState({
         title: '',

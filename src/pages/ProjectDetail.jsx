@@ -231,7 +231,7 @@ const ProjectDetail = () => {
                 isOpen={isTaskModalOpen}
                 onClose={() => setIsTaskModalOpen(false)}
                 onTaskCreated={handleTaskCreated}
-            // initialProject={project.id} // TODO: Implement this in CreateTaskModal
+                initialProject={project.id}
             />
         </div>
     );
