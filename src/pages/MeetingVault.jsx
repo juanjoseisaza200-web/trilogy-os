@@ -4,6 +4,7 @@ import GlassCard from '../components/shared/GlassCard';
 import GlassInput from '../components/shared/GlassInput';
 import GlassModal from '../components/shared/GlassModal';
 import GlassButton from '../components/shared/GlassButton';
+import GlassEditor from '../components/shared/GlassEditor';
 import ConfirmationModal from '../components/shared/ConfirmationModal';
 import airtableService from '../services/airtable';
 import { useAuth } from '../contexts/AuthContext';
@@ -300,25 +301,12 @@ const MeetingVault = () => {
                     </div>
                     <div>
                         <label style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Notes</label>
-                        <textarea
+                        <GlassEditor
                             name="notes"
                             value={formData.notes}
-                            onChange={handleChange}
-                            rows={4}
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid var(--color-border-glass)',
-                                borderRadius: '8px',
-                                padding: '12px 16px',
-                                color: 'var(--color-text-main)',
-                                fontFamily: 'var(--font-main)',
-                                fontSize: '1rem',
-                                width: '100%',
-                                boxSizing: 'border-box',
-                                resize: 'vertical',
-                                outline: 'none'
-                            }}
-                            placeholder="Key decisions and action items..."
+                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                            placeholder="Key decisions and action items... (Markdown supported)"
+                            style={{ height: '300px' }}
                         />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
