@@ -248,26 +248,48 @@ const TaskMaster = () => {
                     marginBottom: '24px',
                     border: '1px solid var(--color-border-glass)'
                 }}>
-                    {['To Do', 'In Progress', 'Done'].map(tab => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            style={{
-                                flex: 1,
-                                background: activeTab === tab ? 'var(--color-gold-primary)' : 'transparent',
-                                color: activeTab === tab ? '#000' : 'var(--color-text-muted)',
-                                border: 'none',
-                                borderRadius: '8px',
-                                padding: '8px',
-                                fontWeight: 'bold',
-                                fontSize: '0.9rem',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s'
-                            }}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+                    {['To Do', 'In Progress', 'Done'].map(tab => {
+                        const count = tasksByStatus[tab]?.length || 0;
+                        return (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                style={{
+                                    flex: 1,
+                                    background: activeTab === tab ? 'var(--color-gold-primary)' : 'transparent',
+                                    color: activeTab === tab ? '#000' : 'var(--color-text-muted)',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    padding: '8px',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.9rem',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    position: 'relative' // For badge positioning
+                                }}
+                            >
+                                {tab}
+                                {/* Count Badge */}
+                                {count > 0 && (
+                                    <span style={{
+                                        position: 'absolute',
+                                        top: '4px',
+                                        right: '4px',
+                                        fontSize: '0.65rem',
+                                        background: activeTab === tab ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)',
+                                        color: activeTab === tab ? 'rgba(0,0,0,0.6)' : 'var(--color-text-muted)',
+                                        borderRadius: '6px',
+                                        padding: '2px 5px',
+                                        minWidth: '16px',
+                                        textAlign: 'center',
+                                        lineHeight: 1
+                                    }}>
+                                        {count}
+                                    </span>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
             )}
 
