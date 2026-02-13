@@ -79,6 +79,13 @@ const ProjectDetail = () => {
     };
 
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleDeleteClick = () => {
         setDeleteConfirmation(true);
@@ -99,19 +106,28 @@ const ProjectDetail = () => {
     if (!project) return <div style={{ padding: '24px', color: 'var(--color-text-muted)' }}>Project not found</div>;
 
     return (
-        <div style={{ height: 'calc(100vh - 20px)', display: 'flex', flexDirection: 'column', padding: '24px', gap: '24px' }}>
+        <div style={{
+            height: isMobile ? 'auto' : 'calc(100vh - 20px)',
+            minHeight: isMobile ? '100vh' : 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: isMobile ? '16px' : '24px',
+            gap: '24px',
+            overflowY: isMobile ? 'auto' : 'hidden', // Page scroll on mobile
+            overflowX: 'hidden'
+        }}>
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%' }}>
                     <button
                         onClick={() => navigate('/projects')}
-                        style={{ background: 'transparent', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer' }}
+                        style={{ background: 'transparent', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', padding: 0 }}
                     >
                         <ArrowLeft size={24} />
                     </button>
-                    <div>
-                        <h1 style={{ margin: 0, color: 'var(--color-gold-primary)' }}>{project.name}</h1>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <h1 style={{ margin: 0, color: 'var(--color-gold-primary)', fontSize: isMobile ? '1.5rem' : '2rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{project.name}</h1>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
                             <select
                                 value={project.relationStatus}
                                 onChange={(e) => handleStatusChange(e.target.value)}
@@ -124,7 +140,8 @@ const ProjectDetail = () => {
                                     fontSize: '0.85rem',
                                     fontWeight: 'bold',
                                     outline: 'none',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    maxWidth: '100%'
                                 }}
                             >
                                 <option value="Prospect">Prospect</option>
@@ -139,19 +156,21 @@ const ProjectDetail = () => {
                         </div>
                     </div>
                 </div>
-                <div style={{ display: 'flex', gap: '12px' }}>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '12px', width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'flex-end' : 'flex-start' }}>
                     <GlassButton
                         variant="secondary"
                         onClick={handleDeleteClick}
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff4d4d', borderColor: 'rgba(255, 77, 77, 0.3)' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff4d4d', borderColor: 'rgba(255, 77, 77, 0.3)', flex: isMobile ? 1 : 'initial', justifyContent: 'center' }}
                     >
                         <Trash2 size={16} />
-                        Delete
+                        {isMobile ? 'Delete' : 'Delete'}
                     </GlassButton>
                     <GlassButton
                         onClick={handleSaveNotes}
                         disabled={savingNotes}
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: savingNotes ? 0.7 : 1 }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: savingNotes ? 0.7 : 1, flex: isMobile ? 1 : 'initial', justifyContent: 'center' }}
                     >
                         <Save size={16} />
                         {savingNotes ? 'Saving...' : 'Save Notes'}
@@ -162,15 +181,9 @@ const ProjectDetail = () => {
             {/* Confirmation Modal for Delete */}
             {deleteConfirmation && (
                 <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
                     background: 'rgba(0,0,0,0.7)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                     zIndex: 1000
                 }}>
                     <div style={{
@@ -187,57 +200,55 @@ const ProjectDetail = () => {
                             Are you sure you want to delete <strong>{project.name}</strong>? This cannot be undone.
                         </p>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                            <button
-                                onClick={() => setDeleteConfirmation(false)}
-                                style={{
-                                    background: 'transparent',
-                                    border: '1px solid var(--color-border-glass)',
-                                    color: 'var(--color-text-main)',
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={confirmDelete}
-                                style={{
-                                    background: 'rgba(255, 77, 77, 0.2)',
-                                    border: '1px solid #ff4d4d',
-                                    color: '#ff4d4d',
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Delete
-                            </button>
+                            <button onClick={() => setDeleteConfirmation(false)} style={{ background: 'transparent', border: '1px solid var(--color-border-glass)', color: 'var(--color-text-main)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Cancel</button>
+                            <button onClick={confirmDelete} style={{ background: 'rgba(255, 77, 77, 0.2)', border: '1px solid #ff4d4d', color: '#ff4d4d', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Delete</button>
                         </div>
                     </div>
                 </div>
             )}
 
             {/* Main Split Layout */}
-            <div style={{ display: 'flex', flex: 1, gap: '24px', overflow: 'hidden', flexDirection: window.innerWidth <= 768 ? 'column' : 'row' }}>
+            <div style={{
+                display: 'flex',
+                flex: isMobile ? 'none' : 1, // Auto height on mobile
+                gap: '24px',
+                overflow: isMobile ? 'visible' : 'hidden', // Page scroll on mobile
+                flexDirection: isMobile ? 'column' : 'row',
+                paddingBottom: isMobile ? '80px' : '0' // Extra space for mobile dock
+            }}>
 
                 {/* Left Panel: Context (Notes) */}
-                <GlassCard style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '0' }}>
+                <GlassCard style={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: isMobile ? 'visible' : 'hidden',
+                    padding: '0',
+                    minHeight: isMobile ? '400px' : 'auto' // Ensure editor is tall enough on mobile
+                }}>
                     <div style={{ padding: '16px', borderBottom: '1px solid var(--color-border-glass)', background: 'rgba(0,0,0,0.2)' }}>
                         <h3 style={{ margin: 0, color: 'var(--color-text-main)' }}>Context & Notes</h3>
                     </div>
-                    <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ flex: 1, overflow: isMobile ? 'visible' : 'hidden', display: 'flex', flexDirection: 'column' }}>
                         <GlassEditor
                             value={project.notes}
                             onChange={(e) => setProject(prev => ({ ...prev, notes: e.target.value }))}
                             placeholder="Type important things to have in mind..."
-                            style={{ border: 'none', borderRadius: '0', background: 'transparent', flex: 1 }}
+                            style={{ border: 'none', borderRadius: '0', background: 'transparent', flex: 1, minHeight: '300px' }}
                         />
                     </div>
                 </GlassCard>
 
                 {/* Right Panel: Execution (Tasks) */}
-                <GlassCard style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '0', maxWidth: window.innerWidth > 768 ? '450px' : '100%' }}>
+                <GlassCard style={{
+                    flex: isMobile ? 'none' : 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: isMobile ? 'visible' : 'hidden',
+                    padding: '0',
+                    maxWidth: isMobile ? '100%' : '450px',
+                    minHeight: isMobile ? 'auto' : 'auto'
+                }}>
                     <div style={{
                         padding: '16px',
                         borderBottom: '1px solid var(--color-border-glass)',
@@ -255,9 +266,16 @@ const ProjectDetail = () => {
                             <Plus size={14} /> Add
                         </GlassButton>
                     </div>
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{
+                        flex: isMobile ? 'none' : 1, // Expand naturally on mobile
+                        overflowY: isMobile ? 'visible' : 'auto', // Page scroll on mobile
+                        padding: '16px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px'
+                    }}>
                         {tasks.length === 0 ? (
-                            <div style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginTop: '20px' }}>
+                            <div style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginTop: '20px', paddingBottom: '20px' }}>
                                 No tasks linked yet.
                             </div>
                         ) : (
@@ -305,6 +323,7 @@ const ProjectDetail = () => {
                     </div>
                 </GlassCard>
             </div>
+
 
             {/* We need to pass the project name/id to the CreateTaskModal to auto-link it, 
                 but CreateTaskModal currently doesn't support 'project' prop.
