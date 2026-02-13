@@ -128,7 +128,8 @@ const createTask = async (taskData) => {
                     Status: taskData.status || 'To Do',
                     Assignee: taskData.assignee,
                     Creator: taskData.creator,
-                    DueDate: taskData.dueDate
+                    DueDate: taskData.dueDate,
+                    Project: taskData.project // Array of record IDs
                 }
             }
         ], { typecast: true });

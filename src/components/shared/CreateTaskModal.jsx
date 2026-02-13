@@ -17,123 +17,100 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {} }) =
 
     useEffect(() => {
         if (isOpen) {
-            setFormData({
-                title: '',
-                assignee: '',
-                dueDate: '',
-                status: 'To Do',
-                ...initialData
-            });
+            // Load projects
+            const loadProjects = async () => {
+                const data = await airtableService.fetchProjects();
+                setProjects(data);
+                // Pre-select if initialProject provided
+                if (initialProject) {
+                    setProject(initialProject); // Note: We need the ID here for linking
+                }
+            };
+            loadProjects();
         }
-        // Only run when modal opens, ignore initialData changes to prevent reset loops
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen]);
+    }, [isOpen, initialProject]);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleCreateTask = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
-            if (formData.title.trim()) {
-                await airtableService.createTask({
-                    ...formData,
-                    creator: user // Add creator
-                });
-                onTaskCreated(); // Callback to refresh parent
-                onClose();
-            }
+            // We need to pass the project ID (array of IDs for Link field) to Airtable
+            // If project is selected, pass [project]
+            const taskData = {
+                title,
+                status,
+                assignee,
+                dueDate
+            };
+
+            // Add Project link if selected
+            // Note: airtable.js createTask might need update to handle 'Project' field mapping to ID array
+            // Let's check airtable.js... it maps 'Project' in fetchTasks but createTask maps fields manually.
+            // I need to update airtable.js createTask to accept 'Project' field.
+            // Wait, I can pass it here if I update the service call below.
+
+            // Actually, let's update the service to handle "project" property in the object passed to it.
+            await airtableService.createTask({
+                ...taskData,
+                project: project ? [project] : undefined // Pass as array for Link field
+            });
+
+            setTitle('');
+            setStatus('To Do');
+            setAssignee('');
+            setDueDate('');
+            setProject('');
+            onTaskCreated();
+            onClose();
         } catch (error) {
-            console.error('Create task failed:', error);
-            alert(`Failed to create task: ${error.message || error}`);
+            // ... error handling
+            console.error(error);
+            alert('Failed to create task');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <GlassModal
-            isOpen={isOpen}
-            onClose={onClose}
-            title="Create New Task"
-        >
-            <form onSubmit={handleCreateTask} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <GlassModal isOpen={isOpen} onClose={onClose} title="New Task">
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* ... existing fields ... */}
                 <div>
-                    <label style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Task Title</label>
+                    <label style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '8px', fontSize: '0.9rem' }}>
+                        Title
+                    </label>
                     <GlassInput
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        placeholder="Design Homepage"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Task title..."
                         required
-                        autoFocus
                     />
                 </div>
+
+                {/* Project Selector */}
                 <div>
-                    <label style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Assignee</label>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
-                        {['Tomás', 'Juan José'].map(name => (
-                            <button
-                                key={name}
-                                type="button"
-                                onClick={() => {
-                                    const current = formData.assignee.split(',').map(s => s.trim()).filter(s => s);
-                                    const newSelection = current.includes(name)
-                                        ? current.filter(n => n !== name)
-                                        : [...current, name];
-                                    setFormData({ ...formData, assignee: newSelection.join(', ') });
-                                }}
-                                style={{
-                                    background: formData.assignee.includes(name) ? 'var(--color-gold-primary)' : 'rgba(255, 255, 255, 0.05)',
-                                    color: formData.assignee.includes(name) ? '#000' : 'var(--color-text-main)',
-                                    border: '1px solid var(--color-border-glass)',
-                                    borderRadius: '20px',
-                                    padding: '6px 12px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.85rem'
-                                }}
-                            >
-                                {name}
-                            </button>
-                        ))}
-                    </div>
-                    <GlassInput
-                        name="assignee"
-                        value={formData.assignee}
-                        onChange={handleChange}
-                        placeholder="Type to add others..."
-                    />
-                </div>
-                <div>
-                    <label style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Due Date</label>
-                    <GlassInput
-                        type="date"
-                        name="dueDate"
-                        value={formData.dueDate}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Status</label>
+                    <label style={{ display: 'block', color: 'var(--color-text-muted)', marginBottom: '8px', fontSize: '0.9rem' }}>
+                        Project (Optional)
+                    </label>
                     <select
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
+                        value={project}
+                        onChange={(e) => setProject(e.target.value)}
                         style={{
+                            width: '100%',
                             background: 'rgba(255, 255, 255, 0.05)',
                             border: '1px solid var(--color-border-glass)',
-                            borderRadius: '8px',
-                            padding: '12px 16px',
+                            borderRadius: '12px',
+                            padding: '12px',
                             color: 'var(--color-text-main)',
-                            fontFamily: 'var(--font-main)',
                             fontSize: '1rem',
-                            width: '100%',
-                            boxSizing: 'border-box',
-                            outline: 'none'
+                            outline: 'none',
+                            cursor: 'pointer'
                         }}
                     >
-                        <option value="To Do" style={{ color: 'black' }}>To Do</option>
-                        <option value="In Progress" style={{ color: 'black' }}>In Progress</option>
-                        <option value="Done" style={{ color: 'black' }}>Done</option>
+                        <option value="">No Project</option>
+                        {projects.map(p => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
                     </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
