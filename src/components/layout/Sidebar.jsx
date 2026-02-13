@@ -83,12 +83,6 @@ const Sidebar = () => {
                         <X size={24} />
                     </button>
 
-                    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                        <img src="/assets/trilogy-logo.png" alt="Trilogy" style={{ height: '40px', marginBottom: '16px' }} />
-                        <h2 style={{ color: '#fff', margin: 0 }}>Trilogy OS</h2>
-                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Welcome, {user?.name || 'User'}</p>
-                    </div>
-
                     <div className="mobile-grid">
                         {navItems.map((item) => (
                             <NavLink

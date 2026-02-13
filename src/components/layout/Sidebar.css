@@ -147,13 +147,18 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(10, 10, 10, 0.95);
+        background: rgba(10, 10, 10, 0.98);
+        /* Slightly darker for focus */
         backdrop-filter: blur(20px);
         z-index: 2000;
         /* Above dock */
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        /* Center content vertically */
         padding: 40px 24px;
+        box-sizing: border-box;
+        /* Ensure padding doesn't cause overflow */
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;
@@ -169,11 +174,17 @@
         grid-template-columns: repeat(2, 1fr);
         /* 2 columns for apps */
         gap: 16px;
-        margin-top: 40px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+        max-width: 400px;
+        /* Prevent spreading too wide on larger phones */
+        align-self: center;
     }
 
     .mobile-app-card {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.03);
+        /* More subtle background */
         border: 1px solid var(--color-border-glass);
         border-radius: 20px;
         padding: 24px;
@@ -183,39 +194,48 @@
         gap: 12px;
         text-decoration: none;
         color: var(--color-text-main);
-        transition: transform 0.2s;
+        transition: transform 0.2s, background 0.2s;
+        aspect-ratio: 1;
+        /* Make them square-ish */
+        justify-content: center;
     }
 
     .mobile-app-card:active {
         transform: scale(0.95);
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.08);
+        /* Highlight on tap */
     }
 
     .mobile-app-icon {
         width: 48px;
         height: 48px;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
-        border-radius: 12px;
+        /* Removed background/gradient on icon container for cleaner look, relying on card bg */
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--color-gold-primary);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        /* box-shadow: 0 4px 12px rgba(0,0,0,0.2); */
     }
 
     .mobile-close-btn {
         position: absolute;
         top: 24px;
         right: 24px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         border: none;
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        color: #fff;
+        width: 44px;
+        height: 44px;
+        color: var(--color-text-muted);
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .mobile-close-btn:active {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
     }
 }
