@@ -135,7 +135,8 @@ const GlassEditor = ({ value, onChange, placeholder, style }) => {
                             padding: '16px',
                             resize: 'none',
                             outline: 'none',
-                            lineHeight: '1.6'
+                            lineHeight: '1.6',
+                            boxSizing: 'border-box' // Fix for layout shift
                         }}
                     />
                 ) : (
