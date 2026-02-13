@@ -48,6 +48,8 @@
         /* No horizontal scroll needed */
         height: auto;
         /* Allow scrolling down */
+        padding-bottom: 120px;
+        /* Extra space for floating nav */
     }
 
     .task-column {
