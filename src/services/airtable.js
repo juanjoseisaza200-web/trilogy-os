@@ -92,7 +92,9 @@ const fetchTasks = async () => {
             status: record.get('Status') || 'To Do',
             assignee: record.get('Assignee'),
             creator: record.get('Creator'),
-            dueDate: record.get('DueDate')
+            dueDate: record.get('DueDate'),
+            project: record.get('Project') ? ensureString(record.get('Project')[0]) : null, // Get first project name if linked
+            projectId: record.get('Project') ? record.get('Project')[0] : null // Keep ID for linking
         }));
     } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -246,5 +248,73 @@ export default {
     },
     fetchUserByName,
     createUser,
-    updateUserRole
+    updateUserRole,
+
+    // Projects
+    fetchProjects: async () => {
+        try {
+            const records = await base('Projects').select({
+                sort: [{ field: 'Name', direction: 'asc' }]
+            }).all();
+
+            return records.map(record => ({
+                id: record.id,
+                name: ensureString(record.get('Name')),
+                status: record.get('Status') || 'Active',
+                relationStatus: record.get('RelationStatus') || 'Prospect',
+                notes: ensureString(record.get('Notes')),
+                taskIds: record.get('Tasks') || [] // Array of linked task IDs
+            }));
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+            return [];
+        }
+    },
+
+    createProject: async (projectData) => {
+        try {
+            const records = await base('Projects').create([
+                {
+                    fields: {
+                        Name: projectData.name,
+                        Status: projectData.status || 'Active',
+                        RelationStatus: projectData.relationStatus || 'Prospect',
+                        Notes: projectData.notes || ''
+                    }
+                }
+            ], { typecast: true });
+            return records[0];
+        } catch (error) {
+            console.error('Error creating project:', error);
+            throw error;
+        }
+    },
+
+    updateProject: async (id, projectData) => {
+        try {
+            const fields = {};
+            if (projectData.name !== undefined) fields.Name = projectData.name;
+            if (projectData.status !== undefined) fields.Status = projectData.status;
+            if (projectData.relationStatus !== undefined) fields.RelationStatus = projectData.relationStatus;
+            if (projectData.notes !== undefined) fields.Notes = projectData.notes;
+
+            const records = await base('Projects').update([
+                { id, fields }
+            ], { typecast: true });
+            return records[0];
+        } catch (error) {
+            console.error('Error updating project:', error);
+            throw error;
+        }
+    },
+
+    deleteProject: async (id) => {
+        try {
+            await base('Projects').destroy(id);
+            return true;
+        } catch (error) {
+            console.error('Error deleting project:', error);
+            throw error;
+        }
+    }
 };
