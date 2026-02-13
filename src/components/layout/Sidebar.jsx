@@ -9,9 +9,9 @@ const Sidebar = () => {
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-        { icon: Calendar, label: 'Calendar', path: '/calendar' },
         { icon: Users, label: 'Meeting Vault', path: '/meetings' },
         { icon: CheckSquare, label: 'Task Master', path: '/tasks' },
+        { icon: Calendar, label: 'Calendar', path: '/calendar' },
     ];
 
     return (
