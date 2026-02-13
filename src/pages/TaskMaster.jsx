@@ -261,11 +261,15 @@ const TaskMaster = () => {
                                     border: 'none',
                                     borderRadius: '8px',
                                     padding: '8px',
+                                    paddingRight: '22px', // Make room for badge
                                     fontWeight: 'bold',
                                     fontSize: '0.9rem',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s',
-                                    position: 'relative' // For badge positioning
+                                    position: 'relative', // For badge positioning
+                                    whiteSpace: 'nowrap', // Prevent wrapping
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
                                 }}
                             >
                                 {tab}
@@ -273,14 +277,14 @@ const TaskMaster = () => {
                                 {count > 0 && (
                                     <span style={{
                                         position: 'absolute',
-                                        top: '4px',
-                                        right: '4px',
-                                        fontSize: '0.65rem',
+                                        top: '2px',
+                                        right: '2px',
+                                        fontSize: '0.6rem',
                                         background: activeTab === tab ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)',
                                         color: activeTab === tab ? 'rgba(0,0,0,0.6)' : 'var(--color-text-muted)',
                                         borderRadius: '6px',
-                                        padding: '2px 5px',
-                                        minWidth: '16px',
+                                        padding: '2px 4px',
+                                        minWidth: '14px',
                                         textAlign: 'center',
                                         lineHeight: 1
                                     }}>
