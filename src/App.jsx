@@ -8,6 +8,8 @@ import TaskMaster from './pages/TaskMaster';
 import Calendar from './pages/Calendar';
 import Layout from './components/layout/Layout';
 import ErrorBoundary from './components/shared/ErrorBoundary';
+import ProjectHub from './pages/ProjectHub';
+import ProjectDetail from './pages/ProjectDetail';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -27,39 +29,16 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Dashboard />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/meetings"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <ErrorBoundary>
-                    <MeetingVault />
-                  </ErrorBoundary>
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/calendar"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <ErrorBoundary>
-                    <Calendar />
-                  </ErrorBoundary>
-                </Layout>
-              </ProtectedRoute>
-            }
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ErrorBoundary>
+                  <Calendar />
+                </ErrorBoundary>
+              </Layout>
+            </ProtectedRoute>
+          }
           />
           <Route
             path="/tasks"
