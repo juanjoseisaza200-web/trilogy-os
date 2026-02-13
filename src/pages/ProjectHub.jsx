@@ -7,35 +7,24 @@ import { useNavigate } from 'react-router-dom';
 import CreateProjectModal from '../components/shared/CreateProjectModal'; // We'll need this
 
 const ProjectHub = () => {
-    const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [iscreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const navigate = useNavigate();
+    // State for delete confirmation
+    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, id: null, name: '' });
 
-    useEffect(() => {
-        loadProjects();
-    }, []);
-
-    const loadProjects = async () => {
-        const data = await airtableService.fetchProjects();
-        setProjects(data);
-        setLoading(false);
+    const handleDeleteClick = (e, project) => {
+        e.stopPropagation(); // Prevent navigation
+        setDeleteConfirmation({ isOpen: true, id: project.id, name: project.name });
     };
 
-    const handleProjectCreated = () => {
-        loadProjects();
-    };
-
-    // Relation Status Badge Colors
-    const getRelationColor = (status) => {
-        switch (status) {
-            case 'Active Client': return 'var(--color-gold-primary)'; // Gold/Greenish
-            case 'Negotiation': return '#f59e0b'; // Orange
-            case 'Prospect': return '#3b82f6'; // Blue
-            case 'On Hold': return '#ef4444'; // Red
-            case 'Completed': return '#10b981'; // Green
-            default: return 'var(--color-text-muted)';
+    const confirmDelete = async () => {
+        if (!deleteConfirmation.id) return;
+        try {
+            await airtableService.deleteProject(deleteConfirmation.id);
+            setProjects(projects.filter(p => p.id !== deleteConfirmation.id));
+        } catch (error) {
+            console.error('Error deleting project:', error);
+            alert('Failed to delete project');
         }
+        setDeleteConfirmation({ isOpen: false, id: null, name: '' });
     };
 
     return (
@@ -79,7 +68,8 @@ const ProjectHub = () => {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 height: '200px', // Fixed height for consistent grid
-                                justifyContent: 'space-between'
+                                justifyContent: 'space-between',
+                                position: 'relative'
                             }}
                             onClick={() => navigate(`/projects/${project.id}`)}
                             onMouseEnter={(e) => {
@@ -91,6 +81,30 @@ const ProjectHub = () => {
                                 e.currentTarget.style.boxShadow = 'none';
                             }}
                         >
+                            {/* Delete Button (Hover only usually, but visible for now for simplicity) */}
+                            <button
+                                onClick={(e) => handleDeleteClick(e, project)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '12px',
+                                    right: '12px',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--color-text-muted)',
+                                    cursor: 'pointer',
+                                    zIndex: 10,
+                                    padding: '4px'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.color = '#ff4d4d'}
+                                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}
+                                title="Delete Project"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+
                             <div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
                                     <div style={{
@@ -152,13 +166,69 @@ const ProjectHub = () => {
                 </div>
             )}
 
-            {/* We will create the CreateProjectModal next */}
-            {iscreateModalOpen && (
-                <CreateProjectModal
-                    isOpen={iscreateModalOpen}
-                    onClose={() => setIsCreateModalOpen(false)}
-                    onProjectCreated={handleProjectCreated}
-                />
+            <CreateProjectModal
+                isOpen={iscreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onProjectCreated={handleProjectCreated}
+            />
+
+            {/* Confirmation Modal for Delete */}
+            {deleteConfirmation.isOpen && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        background: 'rgba(20, 20, 20, 0.95)',
+                        border: '1px solid var(--color-border-glass)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        maxWidth: '400px',
+                        width: '90%',
+                        backdropFilter: 'blur(10px)'
+                    }}>
+                        <h3 style={{ color: '#ff4d4d', marginTop: 0 }}>Delete Project?</h3>
+                        <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>
+                            Are you sure you want to delete <strong>{deleteConfirmation.name}</strong>? This cannot be undone.
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                            <button
+                                onClick={() => setDeleteConfirmation({ isOpen: false, id: null, name: '' })}
+                                style={{
+                                    background: 'transparent',
+                                    border: '1px solid var(--color-border-glass)',
+                                    color: 'var(--color-text-main)',
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                style={{
+                                    background: 'rgba(255, 77, 77, 0.2)',
+                                    border: '1px solid #ff4d4d',
+                                    color: '#ff4d4d',
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

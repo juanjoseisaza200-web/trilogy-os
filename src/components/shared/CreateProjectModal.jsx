@@ -27,7 +27,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
             onClose();
         } catch (error) {
             console.error('Failed to create project:', error);
-            alert('Failed to create project. Please try again.');
+            alert(`Failed to create project: ${error.message || error}. Please check your Airtable field names.`);
         } finally {
             setLoading(false);
         }

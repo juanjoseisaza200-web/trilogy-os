@@ -78,6 +78,23 @@ const ProjectDetail = () => {
         }
     };
 
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+
+    const handleDeleteClick = () => {
+        setDeleteConfirmation(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!project) return;
+        try {
+            await airtableService.deleteProject(project.id);
+            navigate('/projects');
+        } catch (error) {
+            console.error('Error deleting project:', error);
+            alert('Failed to delete project');
+        }
+    };
+
     if (loading) return <div style={{ padding: '24px', color: 'var(--color-text-muted)' }}>Loading project...</div>;
     if (!project) return <div style={{ padding: '24px', color: 'var(--color-text-muted)' }}>Project not found</div>;
 
@@ -124,6 +141,14 @@ const ProjectDetail = () => {
                 </div>
                 <div style={{ display: 'flex', gap: '12px' }}>
                     <GlassButton
+                        variant="secondary"
+                        onClick={handleDeleteClick}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff4d4d', borderColor: 'rgba(255, 77, 77, 0.3)' }}
+                    >
+                        <Trash2 size={16} />
+                        Delete
+                    </GlassButton>
+                    <GlassButton
                         onClick={handleSaveNotes}
                         disabled={savingNotes}
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: savingNotes ? 0.7 : 1 }}
@@ -133,6 +158,65 @@ const ProjectDetail = () => {
                     </GlassButton>
                 </div>
             </div>
+
+            {/* Confirmation Modal for Delete */}
+            {deleteConfirmation && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        background: 'rgba(20, 20, 20, 0.95)',
+                        border: '1px solid var(--color-border-glass)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        maxWidth: '400px',
+                        width: '90%',
+                        backdropFilter: 'blur(10px)'
+                    }}>
+                        <h3 style={{ color: '#ff4d4d', marginTop: 0 }}>Delete Project?</h3>
+                        <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>
+                            Are you sure you want to delete <strong>{project.name}</strong>? This cannot be undone.
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                            <button
+                                onClick={() => setDeleteConfirmation(false)}
+                                style={{
+                                    background: 'transparent',
+                                    border: '1px solid var(--color-border-glass)',
+                                    color: 'var(--color-text-main)',
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                style={{
+                                    background: 'rgba(255, 77, 77, 0.2)',
+                                    border: '1px solid #ff4d4d',
+                                    color: '#ff4d4d',
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Main Split Layout */}
             <div style={{ display: 'flex', flex: 1, gap: '24px', overflow: 'hidden', flexDirection: window.innerWidth <= 768 ? 'column' : 'row' }}>
