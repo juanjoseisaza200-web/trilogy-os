@@ -193,26 +193,7 @@ const Sidebar = () => {
                     </div>
                 </div>
             )}
-            width: '100%',
-            background: 'rgba(255, 77, 77, 0.1)',
-            border: '1px solid rgba(255, 77, 77, 0.3)',
-            color: '#ff4d4d',
-            padding: '16px',
-            borderRadius: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '12px',
-            fontSize: '1rem',
-            fontWeight: 'bold'
-                            }}
-                        >
-            <LogOut size={20} />
-            Log Out
-        </button >
-                    </div >
-                </div >
-            )}
+
         </>
     );
 };
