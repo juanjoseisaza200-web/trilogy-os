@@ -135,8 +135,26 @@ const TaskMaster = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [highlightId, setHighlightId] = useState(null);
+    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, id: null });
     const [activeTab, setActiveTab] = useState('To Do');
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    // Handle URL param for highlighting
+    useEffect(() => {
+        const id = searchParams.get('id');
+        if (id) {
+            setHighlightId(id);
+            // Wait for tasks to load then scroll
+            if (tasks.length > 0) {
+                setTimeout(() => {
+                    const el = document.getElementById(`task-${id}`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 500);
+            }
+        }
+    }, [searchParams, tasks]);
 
     useEffect(() => {
         const handleResize = () => {
