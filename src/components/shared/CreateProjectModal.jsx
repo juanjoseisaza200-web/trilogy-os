@@ -85,6 +85,8 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
                         placeholder="Quick notes or description..."
                         style={{
                             width: '100%',
+                            maxWidth: '100%',
+                            boxSizing: 'border-box',
                             background: 'rgba(255, 255, 255, 0.05)',
                             border: '1px solid var(--color-border-glass)',
                             borderRadius: '12px',
