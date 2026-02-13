@@ -4,7 +4,9 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import MeetingVault from './pages/MeetingVault';
+import MeetingVault from './pages/MeetingVault';
 import TaskMaster from './pages/TaskMaster';
+import Calendar from './pages/Calendar';
 import Layout from './components/layout/Layout';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 
@@ -43,6 +45,18 @@ function App() {
                 <Layout>
                   <ErrorBoundary>
                     <MeetingVault />
+                  </ErrorBoundary>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ErrorBoundary>
+                    <Calendar />
                   </ErrorBoundary>
                 </Layout>
               </ProtectedRoute>

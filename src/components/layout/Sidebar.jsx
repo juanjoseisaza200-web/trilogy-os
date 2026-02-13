@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, CheckSquare, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, CheckSquare, LogOut, Calendar } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.css';
 
@@ -9,6 +9,7 @@ const Sidebar = () => {
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+        { icon: Calendar, label: 'Calendar', path: '/calendar' },
         { icon: Users, label: 'Meeting Vault', path: '/meetings' },
         { icon: CheckSquare, label: 'Task Master', path: '/tasks' },
     ];
