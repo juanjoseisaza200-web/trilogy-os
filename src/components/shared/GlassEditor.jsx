@@ -58,6 +58,8 @@ const GlassEditor = ({ value, onChange, placeholder, style }) => {
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
+                flexWrap: 'wrap', // Allow wrapping on small screens
+                gap: '8px', // Add gap for when wrapping occurs
                 padding: '8px 12px',
                 borderBottom: '1px solid var(--color-border-glass)',
                 background: 'rgba(0, 0, 0, 0.2)'
