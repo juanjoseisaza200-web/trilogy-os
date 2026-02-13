@@ -24,6 +24,7 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, ini
     }, [isOpen]);
 
     // Data Loading
+    // Data Loading
     useEffect(() => {
         if (isOpen) {
             // Apply initial data if present
@@ -43,6 +44,7 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, ini
             const loadProjects = async () => {
                 try {
                     const data = await airtableService.fetchProjects();
+                    console.log('Projects loaded:', data); // Debug
                     setProjects(data);
                 } catch (error) {
                     console.error('Failed to load projects:', error);
@@ -51,10 +53,14 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, ini
             loadProjects();
         } else {
             // Reset on close
-            if (!initialData.title) setTaskTitle('');
-            if (!initialProject) setSelectedProjectId('');
+            setTaskTitle('');
+            setStatus('To Do');
+            setAssignee('');
+            setDueDate('');
+            setSelectedProjectId('');
         }
-    }, [isOpen, initialData, initialProject]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
