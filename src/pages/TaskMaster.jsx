@@ -320,13 +320,66 @@ const TaskMaster = () => {
                         />
                     )}
                     {(!isMobile || activeTab === 'Done') && (
-                        <TaskColumn
-                            title="Done"
-                            tasks={tasksByStatus['Done']}
-                            onStatusChange={handleStatusChange}
-                            onDeleteTask={handleDeleteTask}
-                            highlightId={highlightId}
-                        />
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                            {/* Done Column Header with Clear Button */}
+                            {(!isMobile || activeTab === 'Done') && (
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    marginBottom: '16px',
+                                    paddingRight: '4px' // Align with cards
+                                }}>
+                                    {/* Mobile/Desktop logic for header visibility is a bit complex here, 
+                                        simplifying: if mobile, header is hidden by TaskColumn usually, 
+                                        but we want the clear button. 
+                                        Actually, TaskColumn renders its own header.
+                                        I need to pass a "headerAction" prop to TaskColumn or custom render it.
+                                        Let's stick to modifying TaskColumn usage or just conditionally rendering the button alongside it?
+                                        Better: Modify TaskColumn to accept an action.
+                                     */}
+                                </div>
+                            )}
+
+                            <TaskColumn
+                                title="Done"
+                                tasks={tasksByStatus['Done']}
+                                onStatusChange={handleStatusChange}
+                                onDeleteTask={handleDeleteTask}
+                                highlightId={highlightId}
+                                headerAction={
+                                    tasksByStatus['Done']?.length > 0 ? (
+                                        <button
+                                            onClick={() => setClearConfirmation({ isOpen: true })}
+                                            style={{
+                                                background: 'transparent',
+                                                border: '1px solid var(--color-border-glass)',
+                                                color: 'var(--color-text-muted)',
+                                                borderRadius: '6px',
+                                                padding: '4px 8px',
+                                                fontSize: '0.75rem',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                transition: 'all 0.2s'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.color = '#ff4d4d';
+                                                e.currentTarget.style.borderColor = '#ff4d4d';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.color = 'var(--color-text-muted)';
+                                                e.currentTarget.style.borderColor = 'var(--color-border-glass)';
+                                            }}
+                                        >
+                                            <Trash2 size={12} />
+                                            Clear
+                                        </button>
+                                    ) : null
+                                }
+                            />
+                        </div>
                     )}
                 </div>
             )}
