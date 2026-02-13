@@ -164,7 +164,62 @@ const TaskMaster = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // ... existing code ...
+    // Fetch tasks on mount
+    useEffect(() => {
+        loadTasks();
+    }, []);
+
+    const loadTasks = async () => {
+        const data = await airtableService.fetchTasks();
+        setTasks(data);
+        setLoading(false);
+    };
+
+    const handleStatusChange = async (taskId, newStatus) => {
+        // Optimistic update
+        const updatedTasks = tasks.map(t =>
+            t.id === taskId ? { ...t, status: newStatus } : t
+        );
+        setTasks(updatedTasks);
+
+        const success = await airtableService.updateTaskStatus(taskId, newStatus);
+        if (!success) {
+            // Revert if failed
+            loadTasks();
+            alert('Failed to update task status');
+        }
+    };
+
+    const handleTaskCreated = () => {
+        loadTasks();
+    };
+
+    const handleDeleteTask = (id) => {
+        setDeleteConfirmation({ isOpen: true, id });
+    };
+
+    const confirmDeleteTask = async () => {
+        if (!deleteConfirmation.id) return;
+        try {
+            await airtableService.deleteTask(deleteConfirmation.id);
+            setTasks(tasks.filter(t => t.id !== deleteConfirmation.id));
+        } catch (error) {
+            console.error('Delete failed:', error);
+            alert(`Failed to delete task: ${error.message || error}`);
+            loadTasks();
+        }
+        setDeleteConfirmation({ isOpen: false, id: null });
+    };
+
+    console.log('TaskMaster tasks state:', tasks);
+
+    const safeTasks = Array.isArray(tasks) ? tasks : [];
+
+    const tasksByStatus = {
+        'To Do': safeTasks.filter(t => t && t.status === 'To Do'),
+        'In Progress': safeTasks.filter(t => t && t.status === 'In Progress'),
+        'Done': safeTasks.filter(t => t && t.status === 'Done')
+    };
 
     return (
         <div className="task-master-container">
