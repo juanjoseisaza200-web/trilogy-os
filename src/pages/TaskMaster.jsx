@@ -135,81 +135,18 @@ const TaskMaster = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [highlightId, setHighlightId] = useState(null);
-    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, id: null });
+    const [activeTab, setActiveTab] = useState('To Do');
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-    // Handle URL param for highlighting
     useEffect(() => {
-        const id = searchParams.get('id');
-        if (id) {
-            setHighlightId(id);
-            // Wait for tasks to load then scroll
-            if (tasks.length > 0) {
-                setTimeout(() => {
-                    const el = document.getElementById(`task-${id}`);
-                    if (el) {
-                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }, 500);
-            }
-        }
-    }, [searchParams, tasks]);
-
-    // Fetch tasks on mount
-    useEffect(() => {
-        loadTasks();
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const loadTasks = async () => {
-        const data = await airtableService.fetchTasks();
-        setTasks(data);
-        setLoading(false);
-    };
-
-    const handleStatusChange = async (taskId, newStatus) => {
-        // Optimistic update
-        const updatedTasks = tasks.map(t =>
-            t.id === taskId ? { ...t, status: newStatus } : t
-        );
-        setTasks(updatedTasks);
-
-        const success = await airtableService.updateTaskStatus(taskId, newStatus);
-        if (!success) {
-            // Revert if failed
-            loadTasks();
-            alert('Failed to update task status');
-        }
-    };
-
-    const handleTaskCreated = () => {
-        loadTasks();
-    };
-
-    const handleDeleteTask = (id) => {
-        setDeleteConfirmation({ isOpen: true, id });
-    };
-
-    const confirmDeleteTask = async () => {
-        if (!deleteConfirmation.id) return;
-        try {
-            await airtableService.deleteTask(deleteConfirmation.id);
-            setTasks(tasks.filter(t => t.id !== deleteConfirmation.id));
-        } catch (error) {
-            console.error('Delete failed:', error);
-            alert(`Failed to delete task: ${error.message || error}`);
-            loadTasks();
-        }
-        setDeleteConfirmation({ isOpen: false, id: null });
-    };
-
-    console.log('TaskMaster tasks state:', tasks);
-
-    const safeTasks = Array.isArray(tasks) ? tasks : [];
-
-    const tasksByStatus = {
-        'To Do': safeTasks.filter(t => t && t.status === 'To Do'),
-        'In Progress': safeTasks.filter(t => t && t.status === 'In Progress'),
-        'Done': safeTasks.filter(t => t && t.status === 'Done')
-    };
+    // ... existing code ...
 
     return (
         <div className="task-master-container">
@@ -228,31 +165,70 @@ const TaskMaster = () => {
                 </GlassButton>
             </div>
 
+            {/* Mobile Tabs */}
+            {isMobile && (
+                <div style={{
+                    display: 'flex',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '4px',
+                    marginBottom: '24px',
+                    border: '1px solid var(--color-border-glass)'
+                }}>
+                    {['To Do', 'In Progress', 'Done'].map(tab => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            style={{
+                                flex: 1,
+                                background: activeTab === tab ? 'var(--color-gold-primary)' : 'transparent',
+                                color: activeTab === tab ? '#000' : 'var(--color-text-muted)',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '8px',
+                                fontWeight: 'bold',
+                                fontSize: '0.9rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            {tab}
+                        </button>
+                    ))}
+                </div>
+            )}
+
             {loading ? (
                 <div style={{ color: 'var(--color-text-muted)' }}>Loading tasks...</div>
             ) : (
                 <div className="task-board">
-                    <TaskColumn
-                        title="To Do"
-                        tasks={tasksByStatus['To Do']}
-                        onStatusChange={handleStatusChange}
-                        onDeleteTask={handleDeleteTask}
-                        highlightId={highlightId}
-                    />
-                    <TaskColumn
-                        title="In Progress"
-                        tasks={tasksByStatus['In Progress']}
-                        onStatusChange={handleStatusChange}
-                        onDeleteTask={handleDeleteTask}
-                        highlightId={highlightId}
-                    />
-                    <TaskColumn
-                        title="Done"
-                        tasks={tasksByStatus['Done']}
-                        onStatusChange={handleStatusChange}
-                        onDeleteTask={handleDeleteTask}
-                        highlightId={highlightId}
-                    />
+                    {(!isMobile || activeTab === 'To Do') && (
+                        <TaskColumn
+                            title="To Do"
+                            tasks={tasksByStatus['To Do']}
+                            onStatusChange={handleStatusChange}
+                            onDeleteTask={handleDeleteTask}
+                            highlightId={highlightId}
+                        />
+                    )}
+                    {(!isMobile || activeTab === 'In Progress') && (
+                        <TaskColumn
+                            title="In Progress"
+                            tasks={tasksByStatus['In Progress']}
+                            onStatusChange={handleStatusChange}
+                            onDeleteTask={handleDeleteTask}
+                            highlightId={highlightId}
+                        />
+                    )}
+                    {(!isMobile || activeTab === 'Done') && (
+                        <TaskColumn
+                            title="Done"
+                            tasks={tasksByStatus['Done']}
+                            onStatusChange={handleStatusChange}
+                            onDeleteTask={handleDeleteTask}
+                            highlightId={highlightId}
+                        />
+                    )}
                 </div>
             )}
 
