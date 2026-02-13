@@ -7,6 +7,24 @@ import { useNavigate } from 'react-router-dom';
 import CreateProjectModal from '../components/shared/CreateProjectModal'; // We'll need this
 
 const ProjectHub = () => {
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [iscreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        loadProjects();
+    }, []);
+
+    const loadProjects = async () => {
+        const data = await airtableService.fetchProjects();
+        setProjects(data);
+        setLoading(false);
+    };
+
+    const handleProjectCreated = () => {
+        loadProjects();
+    };
     // State for delete confirmation
     const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, id: null, name: '' });
 
