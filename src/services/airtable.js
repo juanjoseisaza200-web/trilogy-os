@@ -227,6 +227,23 @@ export default {
     updateTaskStatus,
     createTask,
     deleteTask,
+    deleteTasks: async (ids) => {
+        try {
+            // Airtable API allows deleting up to 10 records per request
+            const chunks = [];
+            for (let i = 0; i < ids.length; i += 10) {
+                chunks.push(ids.slice(i, i + 10));
+            }
+
+            for (const chunk of chunks) {
+                await base('Tasks').destroy(chunk);
+            }
+            return true;
+        } catch (error) {
+            console.error('Error deleting tasks batch:', error);
+            throw error;
+        }
+    },
     fetchUserByName,
     createUser,
     updateUserRole
