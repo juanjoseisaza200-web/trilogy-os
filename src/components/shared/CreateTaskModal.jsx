@@ -8,33 +8,38 @@ import { useAuth } from '../../contexts/AuthContext';
 const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, initialProject, initialProjectName }) => {
     const { user } = useAuth();
 
-    // State Definitions
-    const [title, setTitle] = useState('');
+    // State Definitions - Renamed to avoid any potential conflicts
+    const [taskTitle, setTaskTitle] = useState('');
     const [assignee, setAssignee] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [status, setStatus] = useState('To Do');
-    const [project, setProject] = useState(''); // Project ID
+    const [selectedProjectId, setSelectedProjectId] = useState(''); // Project ID
 
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    // Debug log
+    useEffect(() => {
+        if (isOpen) console.log('CreateTaskModal open. Local state initialized.');
+    }, [isOpen]);
+
     // Data Loading
     useEffect(() => {
         if (isOpen) {
-            // Apply initial data if present (e.g. for editing, though this modal is mostly for creation)
-            if (initialData.title) setTitle(initialData.title);
+            // Apply initial data if present
+            if (initialData.title) setTaskTitle(initialData.title);
             if (initialData.assignee) setAssignee(initialData.assignee);
             if (initialData.dueDate) setDueDate(initialData.dueDate);
             if (initialData.status) setStatus(initialData.status);
 
             // Set Project from prop if provided
             if (initialProject) {
-                setProject(initialProject);
+                setSelectedProjectId(initialProject);
             } else {
-                setProject('');
+                setSelectedProjectId('');
             }
 
-            // Load available projects for the dropdown
+            // Load available projects
             const loadProjects = async () => {
                 try {
                     const data = await airtableService.fetchProjects();
@@ -45,9 +50,9 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, ini
             };
             loadProjects();
         } else {
-            // Reset on close (optional but good for cleanup)
-            if (!initialData.title) setTitle('');
-            if (!initialProject) setProject('');
+            // Reset on close
+            if (!initialData.title) setTaskTitle('');
+            if (!initialProject) setSelectedProjectId('');
         }
     }, [isOpen, initialData, initialProject]);
 
@@ -56,20 +61,20 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, ini
         setLoading(true);
         try {
             await airtableService.createTask({
-                title,
+                title: taskTitle, // Map state to API field
                 status,
                 assignee,
                 dueDate,
-                project: project ? [project] : undefined, // Link to project if selected
-                creator: user // Add creator info
+                project: selectedProjectId ? [selectedProjectId] : undefined,
+                creator: user
             });
 
             // Reset Form
-            setTitle('');
+            setTaskTitle('');
             setStatus('To Do');
             setAssignee('');
             setDueDate('');
-            setProject('');
+            setSelectedProjectId('');
 
             onTaskCreated();
             onClose();
@@ -81,7 +86,6 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, ini
         }
     };
 
-    // User selection helper (hardcoded for now, same as before)
     const availableUsers = ['Tomás', 'Juan José'];
 
     const toggleAssignee = (name) => {
@@ -100,8 +104,8 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, ini
                         Task Title
                     </label>
                     <GlassInput
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={taskTitle}
+                        onChange={(e) => setTaskTitle(e.target.value)}
                         placeholder="e.g. Design Homepage"
                         required
                         autoFocus
@@ -114,8 +118,8 @@ const CreateTaskModal = ({ isOpen, onClose, onTaskCreated, initialData = {}, ini
                         Project (Optional)
                     </label>
                     <select
-                        value={project}
-                        onChange={(e) => setProject(e.target.value)}
+                        value={selectedProjectId}
+                        onChange={(e) => setSelectedProjectId(e.target.value)}
                         style={{
                             width: '100%',
                             background: 'rgba(255, 255, 255, 0.05)',
