@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GlassCard from '../components/shared/GlassCard';
 import GlassButton from '../components/shared/GlassButton';
-import { Plus, Folder, Clock, MoreHorizontal, ArrowRight } from 'lucide-react';
+import { Plus, Folder, Clock, MoreHorizontal, ArrowRight, Trash2 } from 'lucide-react';
 import airtableService from '../services/airtable';
 import { useNavigate } from 'react-router-dom';
 import CreateProjectModal from '../components/shared/CreateProjectModal'; // We'll need this
@@ -113,27 +113,39 @@ const ProjectHub = () => {
                             }}
                         >
                             {/* Delete Button (Hover only usually, but visible for now for simplicity) */}
+                            {/* Delete Button */}
                             <button
                                 onClick={(e) => handleDeleteClick(e, project)}
                                 style={{
                                     position: 'absolute',
                                     top: '12px',
                                     right: '12px',
-                                    background: 'transparent',
-                                    border: 'none',
+                                    background: 'rgba(0, 0, 0, 0.3)',
+                                    border: '1px solid var(--color-border-glass)',
+                                    borderRadius: '50%',
+                                    width: '32px',
+                                    height: '32px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                     color: 'var(--color-text-muted)',
                                     cursor: 'pointer',
                                     zIndex: 10,
-                                    padding: '4px'
+                                    transition: 'all 0.2s'
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.color = '#ff4d4d'}
-                                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.color = '#ff4d4d';
+                                    e.currentTarget.style.borderColor = '#ff4d4d';
+                                    e.currentTarget.style.background = 'rgba(255, 77, 77, 0.1)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.color = 'var(--color-text-muted)';
+                                    e.currentTarget.style.borderColor = 'var(--color-border-glass)';
+                                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+                                }}
                                 title="Delete Project"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
+                                <Trash2 size={16} />
                             </button>
 
                             <div>
