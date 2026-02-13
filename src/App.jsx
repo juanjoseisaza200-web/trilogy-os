@@ -29,17 +29,57 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          path="/calendar"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <ErrorBoundary>
-                  <Calendar />
-                </ErrorBoundary>
-              </Layout>
-            </ProtectedRoute>
-          }
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
           />
+
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ErrorBoundary>
+                    <ProjectHub />
+                  </ErrorBoundary>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/projects/:id"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ErrorBoundary>
+                    <ProjectDetail />
+                  </ErrorBoundary>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/meetings"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ErrorBoundary>
+                    <MeetingVault />
+                  </ErrorBoundary>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/tasks"
             element={
@@ -47,6 +87,19 @@ function App() {
                 <Layout>
                   <ErrorBoundary>
                     <TaskMaster />
+                  </ErrorBoundary>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/calendar"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ErrorBoundary>
+                    <Calendar />
                   </ErrorBoundary>
                 </Layout>
               </ProtectedRoute>
