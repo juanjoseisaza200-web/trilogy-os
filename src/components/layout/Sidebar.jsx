@@ -105,7 +105,21 @@ const Sidebar = () => {
 
             {/* Mobile Overlay (Command Center) */}
             {isMobile && (
-                <div className={`mobile-overlay ${isMenuOpen ? 'open' : ''}`}>
+                <div
+                    className={`mobile-overlay ${isMenuOpen ? 'open' : ''}`}
+                    onTouchStart={(e) => {
+                        window.touchStartY = e.touches[0].clientY;
+                    }}
+                    onTouchEnd={(e) => {
+                        const touchEndY = e.changedTouches[0].clientY;
+                        const deltaY = touchEndY - window.touchStartY;
+                        // If swipe down > 50px
+                        if (deltaY > 50) {
+                            setIsMenuOpen(false);
+                            setIsEditing(false);
+                        }
+                    }}
+                >
                     {/* Header Row: Close Button + toggle edit */}
                     <div style={{
                         position: 'absolute',
@@ -119,7 +133,7 @@ const Sidebar = () => {
                     }}>
                         {/* Edit Toggle */}
                         <button
-                            onClick={() => setIsEditing(!isEditing)}
+                            onClick={(e) => { e.stopPropagation(); setIsEditing(!isEditing); }}
                             style={{
                                 background: isEditing ? 'var(--color-gold-primary)' : 'rgba(255,255,255,0.05)',
                                 color: isEditing ? '#000' : 'var(--color-text-muted)',
@@ -135,12 +149,12 @@ const Sidebar = () => {
                             {isEditing ? 'Done' : 'Customize'}
                         </button>
 
-                        <button className="mobile-close-btn" onClick={() => { setIsMenuOpen(false); setIsEditing(false); }}>
+                        <button className="mobile-close-btn" onClick={(e) => { e.stopPropagation(); setIsMenuOpen(false); setIsEditing(false); }}>
                             <X size={24} />
                         </button>
                     </div>
 
-                    <div className="mobile-grid">
+                    <div className="mobile-grid" onClick={(e) => e.stopPropagation()}>
                         {navItems.map((item) => {
                             const isDocked = dockItems.includes(item.path);
                             return (
