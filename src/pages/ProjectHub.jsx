@@ -113,36 +113,25 @@ const ProjectHub = () => {
                             }}
                         >
                             {/* Delete Button (Hover only usually, but visible for now for simplicity) */}
-                            {/* Delete Button */}
+                            {/* Delete Button - Exact style from MeetingVault */}
                             <button
                                 onClick={(e) => handleDeleteClick(e, project)}
                                 style={{
                                     position: 'absolute',
                                     top: '12px',
                                     right: '12px',
-                                    background: 'rgba(0, 0, 0, 0.3)',
-                                    border: '1px solid var(--color-border-glass)',
-                                    borderRadius: '50%',
-                                    width: '32px',
-                                    height: '32px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
+                                    background: 'transparent',
+                                    border: 'none',
                                     color: 'var(--color-text-muted)',
                                     cursor: 'pointer',
+                                    padding: '4px',
                                     zIndex: 10,
-                                    transition: 'all 0.2s'
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
                                 }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.color = '#ff4d4d';
-                                    e.currentTarget.style.borderColor = '#ff4d4d';
-                                    e.currentTarget.style.background = 'rgba(255, 77, 77, 0.1)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.color = 'var(--color-text-muted)';
-                                    e.currentTarget.style.borderColor = 'var(--color-border-glass)';
-                                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
-                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.color = '#ff4d4d'}
+                                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}
                                 title="Delete Project"
                             >
                                 <Trash2 size={16} />
@@ -158,34 +147,36 @@ const ProjectHub = () => {
                                     }}>
                                         <Folder size={24} />
                                     </div>
-                                    <span style={{
-                                        fontSize: '0.75rem',
-                                        padding: '4px 8px',
-                                        borderRadius: '12px',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        color: getRelationColor(project.relationStatus),
-                                        border: `1px solid ${getRelationColor(project.relationStatus)}`,
-                                        fontWeight: 'bold'
-                                    }}>
-                                        {project.relationStatus}
-                                    </span>
+                                    {/* Status Badge moved down or removed from here to avoid overlap, 
+                                        but if user wants it visible, I should just give it margin-right 
+                                        OR move it to bottom. 
+                                        Let's move it to bottom for cleaner look and no overlap. */}
                                 </div>
                                 <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#fff' }}>{project.name}</h3>
                             </div>
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center', marginTop: 'auto' }}>
+                                <span style={{
+                                    fontSize: '0.75rem',
+                                    padding: '4px 8px',
+                                    borderRadius: '12px',
+                                    background: 'rgba(255,255,255,0.05)',
+                                    color: getRelationColor(project.relationStatus),
+                                    border: `1px solid ${getRelationColor(project.relationStatus)}`,
+                                    fontWeight: 'bold'
+                                }}>
+                                    {project.relationStatus}
+                                </span>
                                 <div style={{
                                     fontSize: '0.85rem',
                                     color: 'var(--color-text-muted)',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '6px'
+                                    gap: '6px',
+                                    marginLeft: 'auto'
                                 }}>
                                     <Clock size={14} />
                                     <span>{project.status}</span>
-                                </div>
-                                <div style={{ color: 'var(--color-gold-primary)' }}>
-                                    <ArrowRight size={20} />
                                 </div>
                             </div>
                         </GlassCard>
