@@ -7,9 +7,14 @@
     font-family: var(--font-main);
     font-size: 1rem;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    /* Allow flex shrinking */
     box-sizing: border-box;
     outline: none;
     transition: border-color 0.2s ease, background 0.2s ease;
+    -webkit-appearance: none;
+    /* Remove native styling on iOS */
 }
 
 .glass-input:focus {
