@@ -2,26 +2,29 @@ import React, { useState, useEffect } from 'react';
 import GlassCard from '../components/shared/GlassCard';
 import { Rocket, TrendingUp, DollarSign, ShoppingCart, Activity, Target, MousePointerClick, Eye, Megaphone, TrendingDown } from 'lucide-react';
 import DateRangePicker from '../components/shared/DateRangePicker';
-import shopifyService from '../services/shopify';
 import metaAdsService from '../services/meta';
+import instagramService from '../services/instagram';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 const Orbit = () => {
     const [dateRange, setDateRange] = useState({ start: null, end: null });
     const [salesData, setSalesData] = useState(null);
     const [adsData, setAdsData] = useState(null);
+    const [socialData, setSocialData] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
             try {
-                const [sData, aData] = await Promise.all([
+                const [sData, aData, socData] = await Promise.all([
                     shopifyService.fetchSalesData(dateRange),
-                    metaAdsService.fetchAdsData(dateRange)
+                    metaAdsService.fetchAdsData(dateRange),
+                    instagramService.fetchSocialData(dateRange)
                 ]);
                 setSalesData(sData);
                 setAdsData(aData);
+                setSocialData(socData);
             } catch (error) {
                 console.error("Error fetching data", error);
             } finally {
@@ -128,7 +131,7 @@ const Orbit = () => {
                     </div>
 
                     {/* Campaign Performance Table */}
-                    <GlassCard>
+                    <GlassCard style={{ marginBottom: '24px' }}>
                         <h3 style={{ margin: '0 0 16px 0', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <Target size={20} color="var(--color-gold-primary)" />
                             Campaign Performance
@@ -174,6 +177,34 @@ const Orbit = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    </GlassCard>
+
+                    {/* Social Health & Reach */}
+                    <h2 style={{ margin: '8px 0', color: 'var(--color-text-main)', fontSize: '1.4rem' }}>Social Health (Instagram)</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                        <KpiCard title="Total Followers" value={(socialData?.followers / 1000).toFixed(1) + 'k'} icon={Rocket} trend={`+${socialData?.newFollowers}`} />
+                        <KpiCard title="Accounts Reached" value={(socialData?.reach / 1000).toFixed(1) + 'k'} icon={Eye} trend="+15%" />
+                        <KpiCard title="Engagement Rate" value={socialData?.engagementRate + '%'} icon={Target} trend="+0.2%" />
+                        <KpiCard title="Profile Views" value={(socialData?.profileViews / 1000).toFixed(1) + 'k'} icon={Activity} trend="+5.4%" />
+                    </div>
+
+                    <GlassCard>
+                        <h3 style={{ margin: '0 0 16px 0', color: 'var(--color-text-main)' }}>Recent Content Performance</h3>
+                        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
+                            {socialData?.recentPosts.map(post => (
+                                <div key={post.id} style={{ minWidth: '200px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '12px', border: '1px solid var(--color-border-glass)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-gold-primary)', fontWeight: 'bold' }}>{post.type}</span>
+                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{post.date}</span>
+                                    </div>
+                                    <div style={{ width: '100%', height: '100px', background: 'rgba(0,0,0,0.5)', borderRadius: '8px', marginBottom: '12px' }}></div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-text-main)', fontSize: '0.9rem' }}>
+                                        <span>❤️ {post.likes}</span>
+                                        <span>💬 {post.comments}</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </GlassCard>
                 </>
