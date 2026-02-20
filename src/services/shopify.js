@@ -104,7 +104,7 @@ const shopifyService = {
         // Aggregate product data for Hero Products
         order.lineItems.edges.forEach(lineItemEdge => {
           const item = lineItemEdge.node;
-          const itemValue = parseFloat(item.originalTotalPriceSet.shopMoney.amount);
+          const itemValue = parseFloat(item.discountedTotalSet.shopMoney.amount);
           if (!productCounter[item.title]) {
             productCounter[item.title] = { id: item.product?.id || item.title, name: item.title, orders: 0, sales: 0 };
           }
