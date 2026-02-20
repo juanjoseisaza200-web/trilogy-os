@@ -4,16 +4,16 @@
 const SHOPIFY_STORE_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN;
 const SHOPIFY_ACCESS_TOKEN = import.meta.env.VITE_SHOPIFY_ACCESS_TOKEN;
 
-// Helper to format Shopify dates into YYYY-MM-DD
+// Helper to format Shopify dates into YYYY-MM-DD to avoid GraphQL parse errors with ISO strings
 const formatDateForShopify = (date) => {
-  return date.toISOString();
+  return date.toISOString().split('T')[0];
 };
 
 // GraphQL Query to fetch essential Sales and Orders data over a period.
 // We query orders within the date range, then process them client side to extract KPIs.
 const buildGqlQuery = (startDate, endDate) => `
 {
-  orders(first: 250, query: "created_at:>=${formatDateForShopify(startDate)} AND created_at:<=${formatDateForShopify(endDate)}") {
+  orders(first: 250, reverse: true, query: "created_at:>=${formatDateForShopify(startDate)} AND created_at:<=${formatDateForShopify(endDate)} AND financial_status:paid") {
     edges {
       node {
         id
