@@ -56,7 +56,7 @@ const CommandCenter = () => {
                         <Rocket size={28} />
                     </div>
                     <div>
-                        <h1 style={{ margin: 0, color: 'var(--color-gold-primary)', fontSize: '2rem' }}>Orbit</h1>
+                        <h1 style={{ margin: 0, color: 'var(--color-gold-primary)', fontSize: '2rem' }}>Command Center</h1>
                         <p style={{ margin: 0, color: 'var(--color-text-muted)' }}>E-commerce Command Center</p>
                     </div>
                 </div>
