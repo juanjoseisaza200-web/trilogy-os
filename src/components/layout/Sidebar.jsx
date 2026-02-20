@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, CheckSquare, LogOut, Calendar, Folder, Grid, X } from 'lucide-react';
+import { LayoutDashboard, Users, CheckSquare, LogOut, Calendar, Folder, Grid, X, Rocket } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.css';
 
@@ -11,7 +11,7 @@ const Sidebar = () => {
     const [isEditing, setIsEditing] = React.useState(false);
 
     // Default dock items
-    const defaultDock = ['/', '/projects', '/tasks'];
+    const defaultDock = ['/', '/projects', '/tasks', '/orbit'];
 
     // Initialize from local storage or default
     const [dockItems, setDockItems] = React.useState(() => {
@@ -31,6 +31,7 @@ const Sidebar = () => {
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+        { icon: Rocket, label: 'Orbit', path: '/orbit' },
         { icon: Folder, label: 'Projects', path: '/projects' },
         { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
         { icon: Users, label: 'Meeting Vault', path: '/meetings' },

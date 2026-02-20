@@ -10,6 +10,7 @@ import Layout from './components/layout/Layout';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 import ProjectHub from './pages/ProjectHub';
 import ProjectDetail from './pages/ProjectDetail';
+import Orbit from './pages/Orbit';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -100,6 +101,19 @@ function App() {
                 <Layout>
                   <ErrorBoundary>
                     <Calendar />
+                  </ErrorBoundary>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/orbit"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ErrorBoundary>
+                    <Orbit />
                   </ErrorBoundary>
                 </Layout>
               </ProtectedRoute>
