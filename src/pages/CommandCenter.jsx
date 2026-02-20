@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import GlassCard from '../components/shared/GlassCard';
 import { Rocket, TrendingUp, DollarSign, ShoppingCart, Activity, Target, MousePointerClick, Eye, Megaphone, TrendingDown } from 'lucide-react';
 import DateRangePicker from '../components/shared/DateRangePicker';
+import shopifyService from '../services/shopify';
+import metaAdsService from '../services/meta';
 import instagramService from '../services/instagram';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
