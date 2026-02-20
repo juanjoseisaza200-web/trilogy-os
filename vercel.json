@@ -1,8 +1,12 @@
 {
     "rewrites": [
         {
+            "source": "/api/shopify/(.*)",
+            "destination": "https://cxqg0w-01.myshopify.com/$1"
+        },
+        {
             "source": "/(.*)",
-            "destination": "/"
+            "destination": "/index.html"
         }
     ]
 }
