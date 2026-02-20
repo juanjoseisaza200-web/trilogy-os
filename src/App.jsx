@@ -7,10 +7,9 @@ import MeetingVault from './pages/MeetingVault';
 import TaskMaster from './pages/TaskMaster';
 import Calendar from './pages/Calendar';
 import Layout from './components/layout/Layout';
-import ErrorBoundary from './components/shared/ErrorBoundary';
 import ProjectHub from './pages/ProjectHub';
 import ProjectDetail from './pages/ProjectDetail';
-import Orbit from './pages/Orbit';
+import CommandCenter from './pages/CommandCenter';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -108,12 +107,12 @@ function App() {
           />
 
           <Route
-            path="/orbit"
+            path="/command-center"
             element={
               <ProtectedRoute>
                 <Layout>
                   <ErrorBoundary>
-                    <Orbit />
+                    <CommandCenter />
                   </ErrorBoundary>
                 </Layout>
               </ProtectedRoute>

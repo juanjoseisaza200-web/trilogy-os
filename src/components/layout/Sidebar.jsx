@@ -11,7 +11,7 @@ const Sidebar = () => {
     const [isEditing, setIsEditing] = React.useState(false);
 
     // Default dock items
-    const defaultDock = ['/', '/projects', '/tasks', '/orbit'];
+    const defaultDock = ['/', '/projects', '/tasks', '/command-center'];
 
     // Initialize from local storage or default
     const [dockItems, setDockItems] = React.useState(() => {
@@ -31,7 +31,7 @@ const Sidebar = () => {
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-        { icon: Rocket, label: 'Orbit', path: '/orbit' },
+        { icon: Rocket, label: 'Command Center', path: '/command-center' },
         { icon: Folder, label: 'Projects', path: '/projects' },
         { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
         { icon: Users, label: 'Meeting Vault', path: '/meetings' },
